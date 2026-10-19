@@ -20,7 +20,6 @@ export const ContactPage: React.FC<ContactPageProps> = ({ onOpenPrivacy }) => {
   });
 
   const [errors, setErrors] = useState<Partial<Record<keyof InquiryFormData, string>>>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [submittedData, setSubmittedData] = useState<InquiryFormData | null>(null);
 
   const validate = (): boolean => {
@@ -62,12 +61,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({ onOpenPrivacy }) => {
       return;
     }
 
-    setIsSubmitting(true);
-
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setSubmittedData({ ...formData });
-    }, 700);
+    setSubmittedData({ ...formData });
   };
 
   const handleReset = () => {
@@ -85,16 +79,16 @@ export const ContactPage: React.FC<ContactPageProps> = ({ onOpenPrivacy }) => {
     setErrors({});
   };
 
-  const generateMailtoLink = () => {
-    const subject = encodeURIComponent(`Project Inquiry: ${formData.organization} — ${formData.serviceInterest}`);
+  const generateMailtoLink = (data: InquiryFormData) => {
+    const subject = encodeURIComponent(`Project Inquiry: ${data.organization} — ${data.serviceInterest}`);
     const body = encodeURIComponent(
-      `Name: ${formData.fullName}\n` +
-      `Organization: ${formData.organization}\n` +
-      `Email: ${formData.email}\n` +
-      `Service: ${formData.serviceInterest}\n` +
-      `Timeline: ${formData.timeline}\n` +
-      `Budget Range: ${formData.estimatedBudget}\n\n` +
-      `Project Description:\n${formData.projectDescription}\n`
+      `Name: ${data.fullName}\n` +
+      `Organization: ${data.organization}\n` +
+      `Email: ${data.email}\n` +
+      `Service: ${data.serviceInterest}\n` +
+      `Timeline: ${data.timeline}\n` +
+      `Budget Range: ${data.estimatedBudget}\n\n` +
+      `Project Description:\n${data.projectDescription}\n`
     );
     return `mailto:${COMPANY_INFO.primaryEmail}?subject=${subject}&body=${body}`;
   };
@@ -113,7 +107,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({ onOpenPrivacy }) => {
             </h1>
             <p className="text-base sm:text-lg text-[#5F6573] dark:text-[#9CA3AF] leading-relaxed">
               Have an operational challenge or an idea for a digital system? Tell us what you're trying to solve.
-              Our engineering leads review all submissions directly and provide honest feasibility feedback.
+              We’ll prepare an email inquiry for you to review and send to our engineering leads.
             </p>
           </div>
         </div>
@@ -129,10 +123,10 @@ export const ContactPage: React.FC<ContactPageProps> = ({ onOpenPrivacy }) => {
                   <CheckCircle2 className="w-6 h-6 text-[#17191D] dark:text-white shrink-0 mt-0.5" />
                   <div>
                     <h2 className="text-base font-bold text-[#17191D] dark:text-[#F7F7F8] mb-1 font-mono">
-                      Project Inquiry Received
+                      Your Inquiry Is Ready
                     </h2>
                     <p className="text-sm text-[#5F6573] dark:text-[#9CA3AF] leading-relaxed">
-                      Thank you, <strong>{submittedData.fullName}</strong>. Your project brief has been logged for review by our engineering leads (Jhary Caturza & AJ Rienze). We aim to review requirements within 1 business day.
+                      Thank you, <strong>{submittedData.fullName}</strong>. Your project brief is ready, but it has not been sent to ALZA yet. Open the email draft below and send it from your email app so our engineering leads can review it.
                     </p>
                   </div>
                 </div>
@@ -169,11 +163,11 @@ export const ContactPage: React.FC<ContactPageProps> = ({ onOpenPrivacy }) => {
 
                 <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-[#E2E5EB] dark:border-[#242830]">
                   <a
-                    href={generateMailtoLink()}
+                    href={generateMailtoLink(submittedData)}
                     className="inline-flex items-center gap-2 text-xs font-semibold text-[#17191D] dark:text-white hover:text-[#5F6573] dark:hover:text-[#9CA3AF] transition-colors"
                   >
                     <Mail className="w-4 h-4" />
-                    <span>Send copy directly via your email client</span>
+                    <span>Open and send inquiry in your email app</span>
                   </a>
 
                   <button
@@ -431,20 +425,10 @@ export const ContactPage: React.FC<ContactPageProps> = ({ onOpenPrivacy }) => {
                 <div className="pt-4 border-t border-[#E2E5EB] dark:border-[#242830] flex flex-col sm:flex-row items-center justify-between gap-4">
                   <button
                     type="submit"
-                    disabled={isSubmitting}
                     className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3 text-xs sm:text-sm font-semibold text-white dark:text-[#0C0D0F] bg-[#17191D] dark:bg-white hover:bg-[#2B2F38] dark:hover:bg-[#E5E7EB] disabled:opacity-50 transition-colors rounded-lg shadow-xs cursor-pointer"
                   >
-                    {isSubmitting ? (
-                      <>
-                        <RefreshCw className="w-4 h-4 animate-spin" />
-                        <span>Validating Submission...</span>
-                      </>
-                    ) : (
-                      <>
-                        <Send className="w-4 h-4" />
-                        <span>Submit Project Inquiry</span>
-                      </>
-                    )}
+                    <Send className="w-4 h-4" />
+                    <span>Prepare Email Inquiry</span>
                   </button>
 
                   <span className="text-xs text-[#5F6573] dark:text-[#9CA3AF]">
