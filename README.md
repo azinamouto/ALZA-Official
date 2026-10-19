@@ -4,7 +4,7 @@ Official corporate website for **ALZA.Net IT Solutions**, a technology and softw
 
 **Motto:** WE FIND. WE SOLVE. WE LIFT.  
 **Leadership:**
-- Jhary Caturza — Co-Founder & Chief Executive Officer
+- Jhayr Caturza — Co-Founder & Chief Executive Officer
 - AJ Rienze — Co-Founder & Chief Technology Officer
 
 ---
