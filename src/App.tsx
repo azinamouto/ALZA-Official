@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { lazy, Suspense, useState, useEffect } from 'react';
 import { PageRoute, ProjectItem, ServiceItem } from './types';
 import { ThemeProvider } from './context/ThemeContext';
 import { Navbar } from './components/layout/Navbar';
@@ -17,11 +17,21 @@ import { AboutSection } from './components/home/AboutSection';
 import { LeadershipSection } from './components/home/LeadershipSection';
 import { ClosingCTA } from './components/home/ClosingCTA';
 
-import { ServicesPage } from './pages/ServicesPage';
-import { WorkPage } from './pages/WorkPage';
-import { ApproachPage } from './pages/ApproachPage';
-import { AboutPage } from './pages/AboutPage';
-import { ContactPage } from './pages/ContactPage';
+const ServicesPage = lazy(() =>
+  import('./pages/ServicesPage').then(({ ServicesPage }) => ({ default: ServicesPage }))
+);
+const WorkPage = lazy(() =>
+  import('./pages/WorkPage').then(({ WorkPage }) => ({ default: WorkPage }))
+);
+const ApproachPage = lazy(() =>
+  import('./pages/ApproachPage').then(({ ApproachPage }) => ({ default: ApproachPage }))
+);
+const AboutPage = lazy(() =>
+  import('./pages/AboutPage').then(({ AboutPage }) => ({ default: AboutPage }))
+);
+const ContactPage = lazy(() =>
+  import('./pages/ContactPage').then(({ ContactPage }) => ({ default: ContactPage }))
+);
 
 import { ProjectModal } from './components/modals/ProjectModal';
 import { ServiceModal } from './components/modals/ServiceModal';
@@ -79,63 +89,74 @@ function AppContent() {
 
       {/* Main Content Area */}
       <main className="flex-1">
-        {currentPage === 'home' && (
-          <>
-            {/* Section 02 — Hero */}
-            <Hero onNavigate={handleNavigate} onExploreWork={handleExploreWork} />
+        <Suspense
+          fallback={
+            <div
+              className="px-6 py-24 text-center text-sm text-[#5F6573] dark:text-[#9CA3AF]"
+              role="status"
+            >
+              Loading page...
+            </div>
+          }
+        >
+          {currentPage === 'home' && (
+            <>
+              {/* Section 02 — Hero */}
+              <Hero onNavigate={handleNavigate} onExploreWork={handleExploreWork} />
 
-            {/* Section 03 — Expertise Strip */}
-            <ExpertiseStrip />
+              {/* Section 03 — Expertise Strip */}
+              <ExpertiseStrip />
 
-            {/* Section 04 — What We Do */}
-            <WhatWeDo
+              {/* Section 04 — What We Do */}
+              <WhatWeDo
+                onNavigate={handleNavigate}
+                onSelectService={(service) => setSelectedService(service)}
+              />
+
+              {/* Section 05 — Selected Work */}
+              <div id="selected-work-section">
+                <SelectedWork
+                  onNavigate={handleNavigate}
+                  onSelectProject={(project) => setSelectedProject(project)}
+                />
+              </div>
+
+              {/* Section 06 — How We Work */}
+              <HowWeWork onNavigate={handleNavigate} />
+
+              {/* Section 07 — About ALZA */}
+              <AboutSection onNavigate={handleNavigate} />
+
+              {/* Section 08 — Leadership */}
+              <LeadershipSection />
+
+              {/* Section 09 — Closing CTA */}
+              <ClosingCTA onNavigate={handleNavigate} />
+            </>
+          )}
+
+          {currentPage === 'services' && (
+            <ServicesPage
               onNavigate={handleNavigate}
               onSelectService={(service) => setSelectedService(service)}
             />
+          )}
 
-            {/* Section 05 — Selected Work */}
-            <div id="selected-work-section">
-              <SelectedWork
-                onNavigate={handleNavigate}
-                onSelectProject={(project) => setSelectedProject(project)}
-              />
-            </div>
+          {currentPage === 'work' && (
+            <WorkPage
+              onNavigate={handleNavigate}
+              onSelectProject={(project) => setSelectedProject(project)}
+            />
+          )}
 
-            {/* Section 06 — How We Work */}
-            <HowWeWork onNavigate={handleNavigate} />
+          {currentPage === 'approach' && <ApproachPage onNavigate={handleNavigate} />}
 
-            {/* Section 07 — About ALZA */}
-            <AboutSection onNavigate={handleNavigate} />
+          {currentPage === 'about' && <AboutPage onNavigate={handleNavigate} />}
 
-            {/* Section 08 — Leadership */}
-            <LeadershipSection />
-
-            {/* Section 09 — Closing CTA */}
-            <ClosingCTA onNavigate={handleNavigate} />
-          </>
-        )}
-
-        {currentPage === 'services' && (
-          <ServicesPage
-            onNavigate={handleNavigate}
-            onSelectService={(service) => setSelectedService(service)}
-          />
-        )}
-
-        {currentPage === 'work' && (
-          <WorkPage
-            onNavigate={handleNavigate}
-            onSelectProject={(project) => setSelectedProject(project)}
-          />
-        )}
-
-        {currentPage === 'approach' && <ApproachPage onNavigate={handleNavigate} />}
-
-        {currentPage === 'about' && <AboutPage onNavigate={handleNavigate} />}
-
-        {currentPage === 'contact' && (
-          <ContactPage onOpenPrivacy={() => setPrivacyModalOpen(true)} />
-        )}
+          {currentPage === 'contact' && (
+            <ContactPage onOpenPrivacy={() => setPrivacyModalOpen(true)} />
+          )}
+        </Suspense>
       </main>
 
       {/* Section 10 — Footer */}
