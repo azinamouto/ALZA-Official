@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { PageRoute } from '../../types';
 import { Menu, X, ArrowUpRight, Sun, Moon } from 'lucide-react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
@@ -12,6 +12,7 @@ interface NavbarProps {
 const EASE_OUT_EXPO: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
 export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
+  const scrollSentinelRef = useRef<HTMLDivElement>(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
@@ -19,11 +20,14 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
   const prefersReduced = useReducedMotion();
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 15);
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    const sentinel = scrollSentinelRef.current;
+    if (!sentinel) return;
+
+    const observer = new IntersectionObserver(([entry]) => {
+      setIsScrolled(!entry.isIntersecting);
+    });
+    observer.observe(sentinel);
+    return () => observer.disconnect();
   }, []);
 
   useEffect(() => {
@@ -60,6 +64,8 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
   };
 
   return (
+    <>
+    <div ref={scrollSentinelRef} className="absolute top-0 left-0 h-4 w-px" aria-hidden="true" />
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
@@ -234,5 +240,6 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
         )}
       </AnimatePresence>
     </header>
+    </>
   );
 };

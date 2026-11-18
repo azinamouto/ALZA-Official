@@ -1,6 +1,7 @@
-import React, { useState, useRef } from 'react';
+import React, { useRef } from 'react';
 import { ArrowUpRight, ArrowRight } from 'lucide-react';
-import { motion, useReducedMotion } from 'framer-motion';
+import { motion, useMotionValue, useReducedMotion, useTransform } from 'framer-motion';
+import type { MotionValue } from 'framer-motion';
 import { PageRoute } from '../../types';
 import { MagneticButton } from '../common/MagneticButton';
 import { LiquidMonolith3D } from './LiquidMonolith3D';
@@ -21,7 +22,56 @@ interface Particle {
   parallaxFactor: number;
 }
 
+const PARTICLES: Particle[] = [
+  { id: 1, x: 10, y: 22, size: 2, opacity: 0.24, speed: 12, parallaxFactor: 0.03 },
+  { id: 2, x: 30, y: 15, size: 1.5, opacity: 0.18, speed: 15, parallaxFactor: 0.04 },
+  { id: 3, x: 74, y: 20, size: 2, opacity: 0.25, speed: 11, parallaxFactor: 0.04 },
+  { id: 4, x: 66, y: 62, size: 1.5, opacity: 0.2, speed: 14, parallaxFactor: 0.05 },
+  { id: 5, x: 20, y: 74, size: 2, opacity: 0.22, speed: 13, parallaxFactor: 0.04 },
+  { id: 6, x: 46, y: 28, size: 1.5, opacity: 0.16, speed: 16, parallaxFactor: 0.02 },
+  { id: 7, x: 89, y: 16, size: 2, opacity: 0.22, speed: 10, parallaxFactor: 0.05 },
+  { id: 8, x: 85, y: 78, size: 1.5, opacity: 0.2, speed: 15, parallaxFactor: 0.03 },
+  { id: 9, x: 40, y: 86, size: 2, opacity: 0.18, speed: 12, parallaxFactor: 0.04 },
+  { id: 10, x: 93, y: 46, size: 1.5, opacity: 0.22, speed: 13, parallaxFactor: 0.05 },
+];
+
 const EASE_OUT_EXPO: [number, number, number, number] = [0.16, 1, 0.3, 1];
+
+const CosmicParticle: React.FC<{
+  particle: Particle;
+  cursorX: MotionValue<number>;
+  cursorY: MotionValue<number>;
+  isDark: boolean;
+  prefersReduced: boolean | null;
+}> = ({ particle, cursorX, cursorY, isDark, prefersReduced }) => {
+  const offsetX = useTransform(cursorX, (value) => prefersReduced ? 0 : value * particle.parallaxFactor * 42);
+  const offsetY = useTransform(cursorY, (value) => prefersReduced ? 0 : value * particle.parallaxFactor * 42);
+
+  return (
+    <motion.div
+      className="absolute"
+      style={{
+        left: `${particle.x}%`,
+        top: `${particle.y}%`,
+        x: offsetX,
+        y: offsetY,
+      }}
+    >
+      <div
+        className={`rounded-full ${
+          isDark ? 'bg-white shadow-[0_0_4px_rgba(255,255,255,0.45)]' : 'bg-[#3F3F46]'
+        }`}
+        style={{
+          width: `${particle.size}px`,
+          height: `${particle.size}px`,
+          opacity: isDark ? particle.opacity * 1.2 : particle.opacity,
+          animation: prefersReduced ? undefined : `float-slow ${particle.speed}s ease-in-out infinite`,
+          animationDelay: `${particle.id * 0.6}s`,
+        }}
+      />
+    </motion.div>
+  );
+};
 
 export const Hero: React.FC<HeroProps> = ({ onNavigate, onExploreWork }) => {
   const containerRef = useRef<HTMLElement>(null);
@@ -29,22 +79,13 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onExploreWork }) => {
   const isDark = theme === 'dark';
   const prefersReduced = useReducedMotion();
 
-  const [cursor, setCursor] = useState({ x: 0, y: 0, pxX: 0, pxY: 0 });
-  const [isHovered, setIsHovered] = useState(false);
-
-  // Sparse monochromatic cosmic dust motes
-  const particles: Particle[] = [
-    { id: 1, x: 10, y: 22, size: 2, opacity: 0.24, speed: 12, parallaxFactor: 0.03 },
-    { id: 2, x: 30, y: 15, size: 1.5, opacity: 0.18, speed: 15, parallaxFactor: 0.04 },
-    { id: 3, x: 74, y: 20, size: 2, opacity: 0.25, speed: 11, parallaxFactor: 0.04 },
-    { id: 4, x: 66, y: 62, size: 1.5, opacity: 0.2, speed: 14, parallaxFactor: 0.05 },
-    { id: 5, x: 20, y: 74, size: 2, opacity: 0.22, speed: 13, parallaxFactor: 0.04 },
-    { id: 6, x: 46, y: 28, size: 1.5, opacity: 0.16, speed: 16, parallaxFactor: 0.02 },
-    { id: 7, x: 89, y: 16, size: 2, opacity: 0.22, speed: 10, parallaxFactor: 0.05 },
-    { id: 8, x: 85, y: 78, size: 1.5, opacity: 0.2, speed: 15, parallaxFactor: 0.03 },
-    { id: 9, x: 40, y: 86, size: 2, opacity: 0.18, speed: 12, parallaxFactor: 0.04 },
-    { id: 10, x: 93, y: 46, size: 1.5, opacity: 0.22, speed: 13, parallaxFactor: 0.05 },
-  ];
+  const cursorX = useMotionValue(0);
+  const cursorY = useMotionValue(0);
+  const cursorPxX = useMotionValue<number | string>('30%');
+  const cursorPxY = useMotionValue<number | string>('45%');
+  const spotlightOpacity = useMotionValue(0.4);
+  const gridX = useTransform(cursorX, (value) => prefersReduced ? 0 : value * -8);
+  const gridY = useTransform(cursorY, (value) => prefersReduced ? 0 : value * -8);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
     if (!containerRef.current || prefersReduced) return;
@@ -53,15 +94,18 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onExploreWork }) => {
     const pxY = e.clientY - rect.top;
     const normX = (pxX / rect.width - 0.5) * 2;
     const normY = (pxY / rect.height - 0.5) * 2;
-    setCursor({ x: normX, y: normY, pxX, pxY });
+    cursorX.set(normX);
+    cursorY.set(normY);
+    cursorPxX.set(pxX);
+    cursorPxY.set(pxY);
   };
 
   return (
     <section
       ref={containerRef}
       onMouseMove={handleMouseMove}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseEnter={() => spotlightOpacity.set(1)}
+      onMouseLeave={() => spotlightOpacity.set(0.4)}
       className="relative min-h-[94vh] flex items-center pt-32 pb-24 md:pt-40 md:pb-32 overflow-hidden border-b border-[var(--border)] transition-colors duration-300"
       style={{
         background: isDark
@@ -70,12 +114,11 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onExploreWork }) => {
       }}
     >
       {/* 1. Faint Monochrome Technical Grid with subtle parallax */}
-      <div
-        className="absolute inset-0 cosmic-grid pointer-events-none transition-transform duration-700 ease-out z-0"
+      <motion.div
+        className="absolute inset-0 cosmic-grid pointer-events-none z-0"
         style={{
-          transform: prefersReduced
-            ? undefined
-            : `translate3d(${cursor.x * -8}px, ${cursor.y * -8}px, 0)`,
+          x: gridX,
+          y: gridY,
           opacity: isDark ? 0.7 : 0.65,
         }}
         aria-hidden="true"
@@ -131,46 +174,34 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onExploreWork }) => {
       />
 
       {/* 4. Soft Cursor-Tracking Monochrome Spotlight */}
-      <div
+      <motion.div
         className="absolute pointer-events-none transition-opacity duration-700 ease-out z-0"
         style={{
-          left: cursor.pxX || '30%',
-          top: cursor.pxY || '45%',
+          left: cursorPxX,
+          top: cursorPxY,
           width: '720px',
           height: '720px',
           transform: 'translate(-50%, -50%)',
           background: isDark
             ? 'radial-gradient(circle, rgba(255, 255, 255, 0.045) 0%, rgba(255, 255, 255, 0.01) 42%, transparent 70%)'
             : 'radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, rgba(244, 244, 245, 0.35) 36%, transparent 68%)',
-          opacity: isHovered ? 1 : 0.4,
+          opacity: spotlightOpacity,
         }}
         aria-hidden="true"
       />
 
       {/* 5. Sparse Floating Micro-Particles */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden z-0" aria-hidden="true">
-        {particles.map((p) => {
-          const offsetX = prefersReduced ? 0 : cursor.x * p.parallaxFactor * 42;
-          const offsetY = prefersReduced ? 0 : cursor.y * p.parallaxFactor * 42;
-          return (
-            <div
-              key={p.id}
-              className={`absolute rounded-full transition-transform duration-500 ease-out ${
-                isDark ? 'bg-white shadow-[0_0_4px_rgba(255,255,255,0.45)]' : 'bg-[#3F3F46]'
-              }`}
-              style={{
-                left: `${p.x}%`,
-                top: `${p.y}%`,
-                width: `${p.size}px`,
-                height: `${p.size}px`,
-                opacity: isDark ? p.opacity * 1.2 : p.opacity,
-                transform: `translate3d(${offsetX}px, ${offsetY}px, 0)`,
-                animation: prefersReduced ? undefined : `float-slow ${p.speed}s ease-in-out infinite`,
-                animationDelay: `${p.id * 0.6}s`,
-              }}
-            />
-          );
-        })}
+        {PARTICLES.map((particle) => (
+          <CosmicParticle
+            key={particle.id}
+            particle={particle}
+            cursorX={cursorX}
+            cursorY={cursorY}
+            isDark={isDark}
+            prefersReduced={prefersReduced}
+          />
+        ))}
       </div>
 
       {/* 6. Main Asymmetric Editorial Grid */}
@@ -279,7 +310,7 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onExploreWork }) => {
             transition={{ duration: 0.85, delay: 0.15, ease: EASE_OUT_EXPO }}
             className="lg:col-span-4 flex items-center justify-center lg:justify-end relative z-10 lg:-mr-6"
           >
-            <LiquidMonolith3D cursor={cursor} isDark={isDark} />
+            <LiquidMonolith3D cursorX={cursorX} cursorY={cursorY} isDark={isDark} />
           </motion.div>
         </div>
       </div>

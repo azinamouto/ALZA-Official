@@ -1,8 +1,10 @@
 import React, { useEffect, useRef } from 'react';
-import { useReducedMotion } from 'framer-motion';
+import { motion, useReducedMotion, useTransform } from 'framer-motion';
+import type { MotionValue } from 'framer-motion';
 
 interface LiquidMonolith3DProps {
-  cursor: { x: number; y: number };
+  cursorX: MotionValue<number>;
+  cursorY: MotionValue<number>;
   isDark: boolean;
 }
 
@@ -11,7 +13,7 @@ interface LiquidMonolith3DProps {
  * Renders harmonic organic surface tension ripples, cursor-reactive studio lighting,
  * Fresnel rim reflections, and 3D perspective orbital hairlines.
  */
-export const LiquidMonolith3D: React.FC<LiquidMonolith3DProps> = ({ cursor, isDark }) => {
+export const LiquidMonolith3D: React.FC<LiquidMonolith3DProps> = ({ cursorX, cursorY, isDark }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const prefersReduced = useReducedMotion();
@@ -21,21 +23,18 @@ export const LiquidMonolith3D: React.FC<LiquidMonolith3DProps> = ({ cursor, isDa
   const isVisibleRef = useRef(true);
 
   useEffect(() => {
-    targetCursor.current = { x: cursor.x, y: cursor.y };
-  }, [cursor.x, cursor.y]);
-
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        isVisibleRef.current = entry.isIntersecting;
-      },
-      { threshold: 0.05 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
+    targetCursor.current = { x: cursorX.get(), y: cursorY.get() };
+    const unsubscribeX = cursorX.on('change', (x) => {
+      targetCursor.current.x = x;
+    });
+    const unsubscribeY = cursorY.on('change', (y) => {
+      targetCursor.current.y = y;
+    });
+    return () => {
+      unsubscribeX();
+      unsubscribeY();
+    };
+  }, [cursorX, cursorY]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -45,7 +44,7 @@ export const LiquidMonolith3D: React.FC<LiquidMonolith3DProps> = ({ cursor, isDa
 
     let animId = 0;
     const logicalSize = 460;
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
     canvas.width = logicalSize * dpr;
     canvas.height = logicalSize * dpr;
     ctx.scale(dpr, dpr);
@@ -222,28 +221,55 @@ export const LiquidMonolith3D: React.FC<LiquidMonolith3DProps> = ({ cursor, isDa
       ctx.stroke();
     };
 
+    drawLiquidForm(0);
+
     const loop = (time: number) => {
-      if (isVisibleRef.current) {
-        drawLiquidForm(time);
-      }
-      if (!prefersReduced) {
+      animId = 0;
+      if (!isVisibleRef.current || document.visibilityState !== 'visible') return;
+      drawLiquidForm(time);
+      if (!prefersReduced) animId = requestAnimationFrame(loop);
+    };
+    const startAnimation = () => {
+      if (!prefersReduced && !animId && isVisibleRef.current && document.visibilityState === 'visible') {
         animId = requestAnimationFrame(loop);
       }
     };
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isVisibleRef.current = entry.isIntersecting;
+        if (entry.isIntersecting) {
+          startAnimation();
+        } else if (animId) {
+          cancelAnimationFrame(animId);
+          animId = 0;
+        }
+      },
+      { rootMargin: '100px 0px' }
+    );
+    if (containerRef.current) observer.observe(containerRef.current);
 
-    drawLiquidForm(0);
-    if (!prefersReduced) {
-      animId = requestAnimationFrame(loop);
-    }
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        startAnimation();
+      } else if (animId) {
+        cancelAnimationFrame(animId);
+        animId = 0;
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
       if (animId) cancelAnimationFrame(animId);
+      observer.disconnect();
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, [isDark, prefersReduced]);
 
   // Subtle 3D tilt for surrounding architectural rings
-  const tiltX = prefersReduced ? 0 : cursor.y * -8;
-  const tiltY = prefersReduced ? 0 : cursor.x * 8;
+  const ringOneX = useTransform(cursorY, (y) => 68 + (prefersReduced ? 0 : y * -8));
+  const ringOneY = useTransform(cursorX, (x) => -18 + (prefersReduced ? 0 : x * 8));
+  const ringTwoX = useTransform(cursorY, (y) => -58 + (prefersReduced ? 0 : y * -5.6));
+  const ringTwoY = useTransform(cursorX, (x) => 24 + (prefersReduced ? 0 : x * 5.6));
 
   return (
     <div
@@ -262,10 +288,12 @@ export const LiquidMonolith3D: React.FC<LiquidMonolith3DProps> = ({ cursor, isDa
       />
 
       {/* 3D Tilted Orbital Glass Ring 1 */}
-      <div
-        className="absolute inset-[7%] rounded-full border border-black/10 dark:border-white/12 transition-transform duration-700 ease-out"
+      <motion.div
+        className="absolute inset-[7%] rounded-full border border-black/10 dark:border-white/12"
         style={{
-          transform: `perspective(1000px) rotateX(${68 + tiltX}deg) rotateY(${-18 + tiltY}deg)`,
+          perspective: 1000,
+          rotateX: ringOneX,
+          rotateY: ringOneY,
           boxShadow: isDark
             ? 'inset 0 1px 0 rgba(255,255,255,0.14)'
             : 'inset 0 1px 0 rgba(255,255,255,0.8)',
@@ -273,10 +301,12 @@ export const LiquidMonolith3D: React.FC<LiquidMonolith3DProps> = ({ cursor, isDa
       />
 
       {/* 3D Tilted Orbital Glass Ring 2 */}
-      <div
-        className="absolute inset-[1%] rounded-full border border-dashed border-black/[0.08] dark:border-white/[0.08] transition-transform duration-1000 ease-out"
+      <motion.div
+        className="absolute inset-[1%] rounded-full border border-dashed border-black/[0.08] dark:border-white/[0.08]"
         style={{
-          transform: `perspective(1000px) rotateX(${-58 + tiltX * 0.7}deg) rotateY(${24 + tiltY * 0.7}deg)`,
+          perspective: 1000,
+          rotateX: ringTwoX,
+          rotateY: ringTwoY,
         }}
       />
 
