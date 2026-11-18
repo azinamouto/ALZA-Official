@@ -238,7 +238,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
             <div>
               <h3 className="text-xl font-semibold mb-2 text-[#F5F5F7]">Partner with our engineering team</h3>
               <p className="text-xs text-white/65 max-w-xl leading-[1.6]">
-                Discuss your organization's technical needs directly with Jhary and AJ.
+                Discuss your organization's technical needs directly with Jhayr and AJ.
               </p>
             </div>
             <button

@@ -8,7 +8,7 @@ export const COMPANY_INFO = {
   location: 'Bohol, Philippines',
   region: 'Central Visayas, Philippines',
   primaryEmail: 'inquiries@alza.net',
-  consultationEmail: 'jhary@alza.net',
+  consultationEmail: 'consultation@alza.net',
   ctoEmail: 'aj@alza.net',
   foundingYear: 2024,
   positioning:
@@ -301,7 +301,7 @@ export const PROCESS_STAGES: ProcessStage[] = [
 
 export const LEADERSHIP_DATA: LeadershipMember[] = [
   {
-    name: 'Jhary Caturza',
+    name: 'Jhayr Caturza',
     role: 'Co-Founder & Chief Executive Officer',
     focus: 'Executive Direction, Client Partnerships & Systems Strategy',
     summary:
