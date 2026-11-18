@@ -1,14 +1,15 @@
 import React from 'react';
-import { SERVICES_DATA, COMPANY_INFO } from '../data/companyData';
+import { SERVICES_DATA } from '../data/companyData';
 import { PageRoute, ServiceItem } from '../types';
-import { Code, Building2, Network, BarChart3, CheckCircle2, ArrowRight, ArrowUpRight, HelpCircle } from 'lucide-react';
+import { Code, Building2, Network, BarChart3, CheckCircle2, ArrowUpRight, HelpCircle } from 'lucide-react';
+import { Reveal, StaggerGroup, StaggerItem, DepthCard } from '../components/common/MotionPrimitives';
 
 interface ServicesPageProps {
   onNavigate: (page: PageRoute) => void;
   onSelectService: (service: ServiceItem) => void;
 }
 
-export const ServicesPage: React.FC<ServicesPageProps> = ({ onNavigate, onSelectService }) => {
+export const ServicesPage: React.FC<ServicesPageProps> = ({ onNavigate }) => {
   const getIcon = (iconName: string) => {
     switch (iconName) {
       case 'Code':
@@ -60,184 +61,202 @@ export const ServicesPage: React.FC<ServicesPageProps> = ({ onNavigate, onSelect
   return (
     <div className="pt-28 pb-24">
       {/* Page Header */}
-      <div className="bg-[#FFFFFF] dark:bg-[#121417] border-b border-[#E2E5EB] dark:border-[#242830] py-16 transition-colors duration-300">
-        <div className="max-w-[1280px] mx-auto px-6">
-          <div className="max-w-3xl">
-            <div className="text-[11px] font-mono font-medium tracking-[0.2em] text-[#5F6573] dark:text-[#9CA3AF] uppercase mb-4">
+      <div className="bg-[#FFFFFF] dark:bg-[#08080A] border-b border-[var(--border)] py-18 relative overflow-hidden transition-colors duration-300">
+        <div
+          className="absolute inset-0 cosmic-grid opacity-55 pointer-events-none"
+          aria-hidden="true"
+        />
+        <div className="max-w-[1280px] mx-auto px-6 relative z-10">
+          <Reveal className="max-w-3xl">
+            <div className="type-eyebrow text-[#585860] dark:text-[#9898A2] mb-4">
               ENGINEERING DISCIPLINES
             </div>
-            <h1 className="text-4xl sm:text-5xl font-extrabold text-[#17191D] dark:text-[#F7F7F8] tracking-tight leading-tight mb-6">
+            <h1 className="type-h1 text-[#0E0E10] dark:text-[#F5F5F7] mb-6 text-balance">
               Services & Technical Solutions
             </h1>
-            <p className="text-base sm:text-lg text-[#5F6573] dark:text-[#9CA3AF] leading-relaxed">
+            <p className="type-body text-[#585860] dark:text-[#9898A2] max-w-2xl">
               We design and construct reliable software systems tailored to real organizational workflows.
               From GovTech compliance engines to enterprise database architecture, our focus is practical durability.
             </p>
-          </div>
+          </Reveal>
         </div>
       </div>
 
       <div className="max-w-[1280px] mx-auto px-6 mt-16 space-y-20">
         {/* Deep Dive into 4 Services */}
-        <div className="space-y-16">
+        <StaggerGroup className="space-y-12">
           {SERVICES_DATA.map((service) => {
             const Icon = getIcon(service.iconName);
             return (
-              <div
-                key={service.id}
-                id={service.id}
-                className="bg-[#FFFFFF] dark:bg-[#141619] border border-[#E2E5EB] dark:border-[#242830] rounded-xl p-8 sm:p-10 shadow-xs"
-              >
-                <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-8 pb-8 border-b border-[#E2E5EB] dark:border-[#242830]">
-                  <div className="max-w-2xl">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="p-2.5 bg-[#F2F4F7] dark:bg-[#1D2026] text-[#17191D] dark:text-white rounded-lg">
-                        <Icon className="w-5 h-5" />
+              <StaggerItem key={service.id}>
+                <DepthCard id={service.id} tiltStrength={2} className="p-8 sm:p-10">
+                  <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-8 pb-8 border-b border-[var(--border)]">
+                    <div className="max-w-2xl">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="p-2.5 bg-[#EFEFF2] dark:bg-[#161619] border border-[var(--border)] text-[#0E0E10] dark:text-[#F5F5F7] rounded-xl">
+                          <Icon className="w-5 h-5" />
+                        </div>
+                        <span className="font-mono text-xs font-semibold text-[#868690] dark:text-[#64646E] tabular-nums">
+                          SERVICE {service.number}
+                        </span>
                       </div>
-                      <span className="font-mono text-xs font-bold text-[#8B92A0] dark:text-[#6B7280]">
-                        SERVICE {service.number}
-                      </span>
+
+                      <h2 className="type-h3 sm:text-3xl text-[#0E0E10] dark:text-[#F5F5F7] mb-2">
+                        {service.title}
+                      </h2>
+                      <p className="text-sm font-semibold text-[#585860] dark:text-[#9898A2] mb-4">
+                        {service.subtitle}
+                      </p>
+                      <p className="text-sm text-[#585860] dark:text-[#9898A2] leading-[1.65]">
+                        {service.description}
+                      </p>
                     </div>
 
-                    <h2 className="text-2xl sm:text-3xl font-extrabold text-[#17191D] dark:text-[#F7F7F8] tracking-tight mb-2">
-                      {service.title}
-                    </h2>
-                    <p className="text-sm font-semibold text-[#5F6573] dark:text-[#9CA3AF] mb-4">
-                      {service.subtitle}
-                    </p>
-                    <p className="text-sm text-[#5F6573] dark:text-[#9CA3AF] leading-relaxed">
-                      {service.description}
-                    </p>
+                    <button
+                      onClick={() => onNavigate('contact')}
+                      className="group btn-primary-depth inline-flex items-center justify-center gap-2 px-5 py-2.5 text-xs font-semibold text-white dark:text-[#050506] bg-[#0E0E10] dark:bg-[#F5F5F7] hover:bg-[#1E1E22] dark:hover:bg-white rounded-xl whitespace-nowrap cursor-pointer self-start"
+                    >
+                      <span>Inquire About This Service</span>
+                      <ArrowUpRight className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                    </button>
                   </div>
 
-                  <button
-                    onClick={() => onNavigate('contact')}
-                    className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-xs font-semibold text-white dark:text-[#0C0D0F] bg-[#17191D] dark:bg-white hover:bg-[#2B2F38] dark:hover:bg-[#E5E7EB] rounded-lg transition-colors shadow-xs whitespace-nowrap cursor-pointer self-start"
-                  >
-                    <span>Inquire About This Service</span>
-                    <ArrowUpRight className="w-3.5 h-3.5" />
-                  </button>
-                </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-8">
+                    {/* Col 1: Capabilities */}
+                    <div>
+                      <h3 className="type-eyebrow text-[#0E0E10] dark:text-[#F5F5F7] mb-4">
+                        Technical Capabilities
+                      </h3>
+                      <ul className="space-y-2.5">
+                        {service.detailedPoints.map((point, i) => (
+                          <li key={i} className="flex items-start gap-2.5 text-xs text-[#585860] dark:text-[#9898A2] leading-[1.6]">
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#0E0E10] dark:bg-[#F5F5F7] shrink-0 mt-1.5" />
+                            <span>{point}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-8">
-                  {/* Col 1: Capabilities */}
-                  <div>
-                    <h3 className="text-xs font-bold text-[#17191D] dark:text-white uppercase tracking-wider mb-4 font-mono">
-                      Technical Capabilities
-                    </h3>
-                    <ul className="space-y-2.5">
-                      {service.detailedPoints.map((point, i) => (
-                        <li key={i} className="flex items-start gap-2 text-xs text-[#5F6573] dark:text-[#9CA3AF]">
-                          <span className="w-1.5 h-1.5 rounded-full bg-[#17191D] dark:bg-white shrink-0 mt-1.5" />
-                          <span>{point}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                    {/* Col 2: Problems Solved */}
+                    <div>
+                      <h3 className="type-eyebrow text-[#0E0E10] dark:text-[#F5F5F7] mb-4">
+                        Operational Bottlenecks Solved
+                      </h3>
+                      <ul className="space-y-2.5">
+                        {service.operationalProblemsSolved.map((problem, i) => (
+                          <li key={i} className="flex items-start gap-2.5 text-xs text-[#585860] dark:text-[#9898A2] leading-[1.6]">
+                            <span className="text-[#0E0E10] dark:text-[#F5F5F7] font-mono mt-0.5">•</span>
+                            <span>{problem}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
 
-                  {/* Col 2: Problems Solved */}
-                  <div>
-                    <h3 className="text-xs font-bold text-[#17191D] dark:text-white uppercase tracking-wider mb-4 font-mono">
-                      Operational Bottlenecks Solved
-                    </h3>
-                    <ul className="space-y-2.5">
-                      {service.operationalProblemsSolved.map((problem, i) => (
-                        <li key={i} className="flex items-start gap-2 text-xs text-[#5F6573] dark:text-[#9CA3AF]">
-                          <span className="text-[#17191D] dark:text-white font-mono mt-0.5">•</span>
-                          <span>{problem}</span>
-                        </li>
-                      ))}
-                    </ul>
+                    {/* Col 3: Handover Deliverables */}
+                    <div>
+                      <h3 className="type-eyebrow text-[#0E0E10] dark:text-[#F5F5F7] mb-4">
+                        Standard Deliverables
+                      </h3>
+                      <ul className="space-y-2.5">
+                        {service.deliverables.map((deliv, i) => (
+                          <li key={i} className="flex items-start gap-2.5 text-xs text-[#0E0E10] dark:text-[#E2E2E6] leading-[1.6]">
+                            <CheckCircle2 className="w-4 h-4 text-[#0E0E10] dark:text-[#F5F5F7] shrink-0 mt-0.5" />
+                            <span>{deliv}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   </div>
-
-                  {/* Col 3: Handover Deliverables */}
-                  <div>
-                    <h3 className="text-xs font-bold text-[#17191D] dark:text-white uppercase tracking-wider mb-4 font-mono">
-                      Standard Deliverables
-                    </h3>
-                    <ul className="space-y-2.5">
-                      {service.deliverables.map((deliv, i) => (
-                        <li key={i} className="flex items-start gap-2 text-xs text-[#17191D] dark:text-[#E5E7EB]">
-                          <CheckCircle2 className="w-4 h-4 text-[#17191D] dark:text-white shrink-0 mt-0.5" />
-                          <span>{deliv}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              </div>
+                </DepthCard>
+              </StaggerItem>
             );
           })}
-        </div>
+        </StaggerGroup>
 
         {/* Engagement Models */}
-        <div className="bg-[#FFFFFF] dark:bg-[#141619] border border-[#E2E5EB] dark:border-[#242830] rounded-xl p-8 sm:p-10 shadow-xs">
-          <div className="max-w-2xl mb-10">
-            <div className="text-[11px] font-mono font-medium tracking-[0.2em] text-[#5F6573] dark:text-[#9CA3AF] uppercase mb-2">
-              STRUCTURED COLLABORATION
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#17191D] dark:text-[#F7F7F8] tracking-tight">
-              Engagement Models
-            </h2>
-            <p className="text-sm text-[#5F6573] dark:text-[#9CA3AF] mt-2 leading-relaxed">
-              We align our engagement structure with your institutional procurement and governance requirements.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {engagementModels.map((model, idx) => (
-              <div key={idx} className="p-6 bg-[#FAFAF8] dark:bg-[#16181D] border border-[#E2E5EB] dark:border-[#242830] rounded-lg flex flex-col justify-between">
-                <div>
-                  <h3 className="text-base font-bold text-[#17191D] dark:text-[#F7F7F8] mb-2">{model.title}</h3>
-                  <p className="text-xs text-[#5F6573] dark:text-[#9CA3AF] leading-relaxed mb-6">{model.scope}</p>
-                  <ul className="space-y-2 pt-4 border-t border-[#E2E5EB] dark:border-[#242830]">
-                    {model.features.map((feat, i) => (
-                      <li key={i} className="flex items-center gap-2 text-xs text-[#17191D] dark:text-[#E5E7EB]">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-[#17191D] dark:text-white shrink-0" />
-                        <span>{feat}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+        <Reveal>
+          <DepthCard enableTilt={false} className="p-8 sm:p-10">
+            <div className="max-w-2xl mb-10">
+              <div className="type-eyebrow text-[#585860] dark:text-[#9898A2] mb-2">
+                STRUCTURED COLLABORATION
               </div>
-            ))}
-          </div>
-        </div>
+              <h2 className="type-h2 text-[#0E0E10] dark:text-[#F5F5F7]">
+                Engagement Models
+              </h2>
+              <p className="text-sm text-[#585860] dark:text-[#9898A2] mt-2 leading-[1.65]">
+                We align our engagement structure with your institutional procurement and governance requirements.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {engagementModels.map((model, idx) => (
+                <div
+                  key={idx}
+                  className="p-6 bg-[#F5F5F7]/75 dark:bg-[#111114]/80 border border-[var(--border)] rounded-2xl flex flex-col justify-between"
+                >
+                  <div>
+                    <h3 className="text-base font-semibold text-[#0E0E10] dark:text-[#F5F5F7] mb-2">
+                      {model.title}
+                    </h3>
+                    <p className="text-xs text-[#585860] dark:text-[#9898A2] leading-[1.6] mb-6">
+                      {model.scope}
+                    </p>
+                    <ul className="space-y-2.5 pt-4 border-t border-[var(--border)]">
+                      {model.features.map((feat, i) => (
+                        <li key={i} className="flex items-center gap-2 text-xs text-[#0E0E10] dark:text-[#E2E2E6]">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-[#0E0E10] dark:text-[#F5F5F7] shrink-0" />
+                          <span>{feat}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </DepthCard>
+        </Reveal>
 
         {/* FAQ Section */}
-        <div className="bg-[#FFFFFF] dark:bg-[#141619] border border-[#E2E5EB] dark:border-[#242830] rounded-xl p-8 sm:p-10 shadow-xs">
-          <div className="flex items-center gap-2 mb-6">
-            <HelpCircle className="w-5 h-5 text-[#17191D] dark:text-white" />
-            <h2 className="text-xl font-bold text-[#17191D] dark:text-[#F7F7F8]">
-              Frequently Asked Questions
-            </h2>
-          </div>
+        <Reveal>
+          <DepthCard enableTilt={false} className="p-8 sm:p-10">
+            <div className="flex items-center gap-2.5 mb-8">
+              <HelpCircle className="w-5 h-5 text-[#0E0E10] dark:text-[#F5F5F7]" />
+              <h2 className="type-h3 text-[#0E0E10] dark:text-[#F5F5F7]">
+                Frequently Asked Questions
+              </h2>
+            </div>
 
-          <div className="divide-y divide-[#E2E5EB] dark:divide-[#242830]">
-            {commonQuestions.map((item, idx) => (
-              <div key={idx} className="py-6 first:pt-0 last:pb-0">
-                <h3 className="text-sm font-bold text-[#17191D] dark:text-[#F7F7F8] mb-2">{item.q}</h3>
-                <p className="text-sm text-[#5F6573] dark:text-[#9CA3AF] leading-relaxed">{item.a}</p>
-              </div>
-            ))}
-          </div>
-        </div>
+            <div className="divide-y divide-[var(--border)]">
+              {commonQuestions.map((item, idx) => (
+                <div key={idx} className="py-6 first:pt-0 last:pb-0">
+                  <h3 className="text-sm font-semibold text-[#0E0E10] dark:text-[#F5F5F7] mb-2">{item.q}</h3>
+                  <p className="text-sm text-[#585860] dark:text-[#9898A2] leading-[1.65]">{item.a}</p>
+                </div>
+              ))}
+            </div>
+          </DepthCard>
+        </Reveal>
 
         {/* CTA Strip */}
-        <div className="p-8 sm:p-10 bg-[#17191D] dark:bg-[#141619] border border-[#242830] text-white rounded-xl flex flex-col sm:flex-row items-center justify-between gap-6">
-          <div>
-            <h3 className="text-xl font-bold mb-2">Ready to discuss your organization's digital system?</h3>
-            <p className="text-xs text-white/70 max-w-xl">
-              We provide prompt technical consultations and clear project roadmaps.
-            </p>
+        <Reveal>
+          <div className="p-8 sm:p-10 bg-[#0A0A0C] dark:bg-[#0D0D0F] border border-white/10 text-white rounded-2xl shadow-[var(--shadow-card)] flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div>
+              <h3 className="text-xl font-semibold mb-2 text-[#F5F5F7]">
+                Ready to discuss your organization's digital system?
+              </h3>
+              <p className="text-xs text-white/65 max-w-xl leading-[1.6]">
+                We provide prompt technical consultations and clear project roadmaps.
+              </p>
+            </div>
+            <button
+              onClick={() => onNavigate('contact')}
+              className="group px-6 py-3 bg-[#F5F5F7] text-[#050506] text-xs font-semibold rounded-xl hover:bg-white transition-all duration-300 hover:-translate-y-0.5 shadow-[0_6px_20px_-4px_rgba(255,255,255,0.18)] whitespace-nowrap cursor-pointer shrink-0 inline-flex items-center gap-2"
+            >
+              <span>Start Project Discussion</span>
+              <ArrowUpRight className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            </button>
           </div>
-          <button
-            onClick={() => onNavigate('contact')}
-            className="px-6 py-3 bg-[#FFFFFF] text-[#17191D] text-xs font-semibold rounded-lg hover:bg-[#FAFAF8] transition-colors whitespace-nowrap cursor-pointer shrink-0"
-          >
-            Start Project Discussion
-          </button>
-        </div>
+        </Reveal>
       </div>
     </div>
   );

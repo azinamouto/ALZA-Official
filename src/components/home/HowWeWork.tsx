@@ -2,130 +2,150 @@ import React, { useState } from 'react';
 import { PROCESS_STAGES } from '../../data/companyData';
 import { PageRoute } from '../../types';
 import { CheckCircle2, ChevronRight } from 'lucide-react';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import { Reveal, DepthCard } from '../common/MotionPrimitives';
 
 interface HowWeWorkProps {
   onNavigate: (page: PageRoute) => void;
 }
 
+const EASE_OUT_EXPO: [number, number, number, number] = [0.16, 1, 0.3, 1];
+
 export const HowWeWork: React.FC<HowWeWorkProps> = ({ onNavigate }) => {
   const [activeStageIndex, setActiveStageIndex] = useState(0);
   const activeStage = PROCESS_STAGES[activeStageIndex];
+  const prefersReduced = useReducedMotion();
 
   return (
-    <section className="py-28 bg-[#FAFAF8] dark:bg-[#0C0D0F] border-b border-[#E2E5EB] dark:border-[#242830] transition-colors duration-300">
+    <section className="py-28 bg-[#FAFAFA] dark:bg-[#050506] border-b border-[var(--border)] transition-colors duration-300">
       <div className="max-w-[1280px] mx-auto px-6">
         {/* Header */}
-        <div className="max-w-2xl mb-20">
-          <div className="text-[11px] font-mono font-medium tracking-[0.2em] text-[#5F6573] dark:text-[#9CA3AF] uppercase mb-4">
+        <Reveal className="max-w-2xl mb-20">
+          <div className="type-eyebrow text-[#585860] dark:text-[#9898A2] mb-4">
             ENGINEERING METHODOLOGY
           </div>
-          <h2 className="text-3xl sm:text-5xl font-extrabold text-[#17191D] dark:text-[#F7F7F8] tracking-tight leading-[1.12] mb-5">
+          <h2 className="type-h2 text-[#0E0E10] dark:text-[#F5F5F7] mb-5 text-balance">
             A disciplined approach from discovery to delivery.
           </h2>
-          <p className="text-base sm:text-lg text-[#5F6573] dark:text-[#9CA3AF] leading-relaxed">
+          <p className="type-body text-[#585860] dark:text-[#9898A2]">
             We avoid speculative guesswork and chaotic sprints. Every system we build adheres
             to five disciplined phases designed to protect organizational data, time, and resources.
           </p>
-        </div>
+        </Reveal>
 
         {/* Desktop Connected Stepper */}
-        <div className="hidden lg:grid grid-cols-5 gap-3 mb-10 relative">
+        <Reveal delay={0.05} className="hidden lg:grid grid-cols-5 gap-3.5 mb-10 relative">
           {PROCESS_STAGES.map((stage, idx) => {
             const isSelected = activeStageIndex === idx;
             return (
               <button
                 key={stage.number}
                 onClick={() => setActiveStageIndex(idx)}
-                className={`p-5 rounded-xl border text-left transition-all cursor-pointer relative ${
+                className={`p-5 rounded-2xl border text-left transition-all duration-300 cursor-pointer relative ${
                   isSelected
-                    ? 'bg-[#FFFFFF] dark:bg-[#141619] border-[#17191D] dark:border-white shadow-xs ring-1 ring-[#17191D] dark:ring-white'
-                    : 'bg-[#FFFFFF]/70 dark:bg-[#121417]/70 border-[#E2E5EB] dark:border-[#242830] hover:bg-[#FFFFFF] dark:hover:bg-[#141619] hover:border-[#17191D]/50'
+                    ? 'depth-surface border-[#0E0E10] dark:border-white/60 -translate-y-0.5'
+                    : 'bg-[#FFFFFF]/65 dark:bg-[#0D0D0F]/65 border-[var(--border)] hover:bg-[#FFFFFF] dark:hover:bg-[#111114] hover:border-[var(--border-strong)] hover:-translate-y-0.5'
                 }`}
               >
                 <div className="flex items-center justify-between mb-3">
                   <span
-                    className={`font-mono text-sm font-bold ${
-                      isSelected ? 'text-[#17191D] dark:text-white' : 'text-[#8B92A0] dark:text-[#6B7280]'
+                    className={`font-mono text-sm font-semibold tabular-nums ${
+                      isSelected ? 'text-[#0E0E10] dark:text-[#F5F5F7]' : 'text-[#868690] dark:text-[#64646E]'
                     }`}
                   >
                     {stage.number}
                   </span>
                   {isSelected && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#17191D] dark:bg-white" aria-hidden="true" />
+                    <span className="text-[10px] font-mono uppercase tracking-widest text-[#0E0E10] dark:text-[#F5F5F7]">
+                      Active
+                    </span>
                   )}
                 </div>
-                <h3 className="text-base font-bold text-[#17191D] dark:text-[#F7F7F8] mb-1">{stage.name}</h3>
-                <p className="text-xs text-[#5F6573] dark:text-[#9CA3AF] line-clamp-2 leading-relaxed">
+                <h3 className="text-base font-semibold text-[#0E0E10] dark:text-[#F5F5F7] mb-1">
+                  {stage.name}
+                </h3>
+                <p className="text-xs text-[#585860] dark:text-[#9898A2] line-clamp-2 leading-[1.55]">
                   {stage.tagline}
                 </p>
               </button>
             );
           })}
-        </div>
+        </Reveal>
 
         {/* Active Stage Deep-Dive Surface */}
-        <div className="bg-[#FFFFFF] dark:bg-[#141619] border border-[#E2E5EB] dark:border-[#242830] rounded-xl p-8 sm:p-10 shadow-xs mb-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            <div className="lg:col-span-7">
-              <div className="flex items-center gap-3 mb-4">
-                <span className="font-mono text-xs font-bold text-[#17191D] dark:text-white bg-[#F2F4F7] dark:bg-[#1D2026] px-2.5 py-1 rounded">
-                  STAGE {activeStage.number} OF 05
-                </span>
-                <span className="text-xs text-[#5F6573] dark:text-[#9CA3AF] font-semibold uppercase tracking-wider font-mono">
-                  {activeStage.name}
-                </span>
-              </div>
-
-              <h3 className="text-2xl font-bold text-[#17191D] dark:text-[#F7F7F8] tracking-tight mb-3">
-                {activeStage.tagline}
-              </h3>
-
-              <p className="text-sm text-[#5F6573] dark:text-[#9CA3AF] leading-relaxed mb-6">
-                {activeStage.description}
-              </p>
-
-              <div className="space-y-2">
-                <span className="text-xs font-bold text-[#17191D] dark:text-white uppercase tracking-wider block mb-2 font-mono text-[11px]">
-                  Disciplines Involved
-                </span>
-                <div className="flex flex-wrap gap-2">
-                  {activeStage.disciplines.map((item, idx) => (
-                    <span
-                      key={idx}
-                      className="text-xs font-medium text-[#17191D] dark:text-[#E5E7EB] bg-[#FAFAF8] dark:bg-[#1A1D23] border border-[#E2E5EB] dark:border-[#242830] px-3 py-1 rounded-md"
-                    >
-                      {item}
+        <Reveal delay={0.1}>
+          <DepthCard enableTilt={false} className="p-8 sm:p-10 mb-10">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeStage.number}
+                initial={prefersReduced ? false : { opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={prefersReduced ? undefined : { opacity: 0, y: -8 }}
+                transition={{ duration: 0.35, ease: EASE_OUT_EXPO }}
+                className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start"
+              >
+                <div className="lg:col-span-7">
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="font-mono text-xs font-semibold text-[#0E0E10] dark:text-[#F5F5F7] bg-[#EFEFF2] dark:bg-[#161619] border border-[var(--border)] px-3 py-1 rounded-lg tabular-nums">
+                      STAGE {activeStage.number} OF 05
                     </span>
-                  ))}
+                    <span className="text-xs text-[#585860] dark:text-[#9898A2] font-semibold uppercase tracking-[0.14em] font-mono">
+                      {activeStage.name}
+                    </span>
+                  </div>
+
+                  <h3 className="type-h3 text-[#0E0E10] dark:text-[#F5F5F7] mb-3">
+                    {activeStage.tagline}
+                  </h3>
+
+                  <p className="text-sm text-[#585860] dark:text-[#9898A2] leading-[1.65] mb-6">
+                    {activeStage.description}
+                  </p>
+
+                  <div className="space-y-2.5">
+                    <span className="type-eyebrow text-[#0E0E10] dark:text-[#F5F5F7] block">
+                      Disciplines Involved
+                    </span>
+                    <div className="flex flex-wrap gap-2">
+                      {activeStage.disciplines.map((item, idx) => (
+                        <span
+                          key={idx}
+                          className="text-xs font-medium text-[#0E0E10] dark:text-[#E2E2E6] bg-[#F3F3F5] dark:bg-[#141417] border border-[var(--border)] px-3 py-1.5 rounded-xl"
+                        >
+                          {item}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
 
-            <div className="lg:col-span-5 bg-[#FAFAF8] dark:bg-[#16181D] border border-[#E2E5EB] dark:border-[#242830] rounded-lg p-6">
-              <span className="text-xs font-bold text-[#17191D] dark:text-white uppercase tracking-wider block mb-4 font-mono text-[11px]">
-                Tangible Deliverables
-              </span>
-              <ul className="space-y-3">
-                {activeStage.deliverables.map((deliv, idx) => (
-                  <li key={idx} className="flex items-start gap-2.5 text-xs text-[#17191D] dark:text-[#E5E7EB]">
-                    <CheckCircle2 className="w-4 h-4 text-[#17191D] dark:text-white shrink-0 mt-0.5" />
-                    <span>{deliv}</span>
-                  </li>
-                ))}
-              </ul>
+                <div className="lg:col-span-5 bg-[#F5F5F7]/70 dark:bg-[#111114]/80 border border-[var(--border)] rounded-2xl p-6">
+                  <span className="type-eyebrow text-[#0E0E10] dark:text-[#F5F5F7] block mb-4">
+                    Tangible Deliverables
+                  </span>
+                  <ul className="space-y-3">
+                    {activeStage.deliverables.map((deliv, idx) => (
+                      <li key={idx} className="flex items-start gap-2.5 text-xs text-[#0E0E10] dark:text-[#E2E2E6]">
+                        <CheckCircle2 className="w-4 h-4 text-[#0E0E10] dark:text-[#F5F5F7] shrink-0 mt-0.5" />
+                        <span className="leading-[1.55]">{deliv}</span>
+                      </li>
+                    ))}
+                  </ul>
 
-              <div className="mt-6 pt-4 border-t border-[#E2E5EB] dark:border-[#242830]">
-                <span className="text-[11px] text-[#5F6573] dark:text-[#9CA3AF] block">
-                  All deliverables undergo formal review and client signoff prior to phase progression.
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
+                  <div className="mt-6 pt-4 border-t border-[var(--border)]">
+                    <span className="text-[11px] text-[#585860] dark:text-[#9898A2] block leading-[1.5]">
+                      All deliverables undergo formal review and client signoff prior to phase progression.
+                    </span>
+                  </div>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </DepthCard>
+        </Reveal>
 
         {/* Mobile Vertical Stepper View */}
         <div className="lg:hidden space-y-3 mb-10">
-          <span className="text-xs font-bold text-[#17191D] dark:text-white uppercase tracking-wider block mb-3 font-mono">
+          <span className="type-eyebrow text-[#0E0E10] dark:text-[#F5F5F7] block mb-3">
             Switch Phase Overview
           </span>
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
@@ -133,10 +153,10 @@ export const HowWeWork: React.FC<HowWeWorkProps> = ({ onNavigate }) => {
               <button
                 key={stage.number}
                 onClick={() => setActiveStageIndex(idx)}
-                className={`py-2 px-3 text-xs font-medium rounded-lg border text-center transition-colors ${
+                className={`py-2.5 px-3 text-xs font-medium rounded-xl border text-center transition-all cursor-pointer ${
                   activeStageIndex === idx
-                    ? 'bg-[#17191D] dark:bg-white text-white dark:text-[#0C0D0F] border-[#17191D] dark:border-white'
-                    : 'bg-[#FFFFFF] dark:bg-[#141619] text-[#5F6573] dark:text-[#9CA3AF] border-[#E2E5EB] dark:border-[#242830]'
+                    ? 'bg-[#0E0E10] dark:bg-[#F5F5F7] text-white dark:text-[#050506] border-[#0E0E10] dark:border-[#F5F5F7]'
+                    : 'bg-[#FFFFFF] dark:bg-[#0D0D0F] text-[#585860] dark:text-[#9898A2] border-[var(--border)]'
                 }`}
               >
                 {stage.number}. {stage.name}
@@ -146,16 +166,16 @@ export const HowWeWork: React.FC<HowWeWorkProps> = ({ onNavigate }) => {
         </div>
 
         {/* Link to Full Approach Page */}
-        <div className="flex items-center justify-between pt-6 border-t border-[#E2E5EB] dark:border-[#242830]">
-          <p className="text-xs text-[#5F6573] dark:text-[#9CA3AF]">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-6 border-t border-[var(--border)]">
+          <p className="text-xs text-[#585860] dark:text-[#9898A2]">
             Want to see how we guarantee system reliability and documentation handover?
           </p>
           <button
             onClick={() => onNavigate('approach')}
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#17191D] dark:text-white hover:text-[#5F6573] dark:hover:text-[#9CA3AF] transition-colors cursor-pointer"
+            className="group inline-flex items-center gap-1.5 text-xs font-semibold text-[#0E0E10] dark:text-[#F5F5F7] hover:opacity-75 transition-opacity cursor-pointer"
           >
             <span>Read full methodology</span>
-            <ChevronRight className="w-4 h-4" />
+            <ChevronRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
           </button>
         </div>
       </div>

@@ -3,7 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { lazy, Suspense, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { MotionConfig, AnimatePresence, motion } from 'framer-motion';
 import { PageRoute, ProjectItem, ServiceItem } from './types';
 import { ThemeProvider } from './context/ThemeContext';
 import { Navbar } from './components/layout/Navbar';
@@ -17,25 +18,17 @@ import { AboutSection } from './components/home/AboutSection';
 import { LeadershipSection } from './components/home/LeadershipSection';
 import { ClosingCTA } from './components/home/ClosingCTA';
 
-const ServicesPage = lazy(() =>
-  import('./pages/ServicesPage').then(({ ServicesPage }) => ({ default: ServicesPage }))
-);
-const WorkPage = lazy(() =>
-  import('./pages/WorkPage').then(({ WorkPage }) => ({ default: WorkPage }))
-);
-const ApproachPage = lazy(() =>
-  import('./pages/ApproachPage').then(({ ApproachPage }) => ({ default: ApproachPage }))
-);
-const AboutPage = lazy(() =>
-  import('./pages/AboutPage').then(({ AboutPage }) => ({ default: AboutPage }))
-);
-const ContactPage = lazy(() =>
-  import('./pages/ContactPage').then(({ ContactPage }) => ({ default: ContactPage }))
-);
+import { ServicesPage } from './pages/ServicesPage';
+import { WorkPage } from './pages/WorkPage';
+import { ApproachPage } from './pages/ApproachPage';
+import { AboutPage } from './pages/AboutPage';
+import { ContactPage } from './pages/ContactPage';
 
 import { ProjectModal } from './components/modals/ProjectModal';
 import { ServiceModal } from './components/modals/ServiceModal';
 import { PrivacyModal } from './components/modals/PrivacyModal';
+
+const EASE_OUT_EXPO: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
 function AppContent() {
   const [currentPage, setCurrentPage] = useState<PageRoute>('home');
@@ -60,11 +53,7 @@ function AppContent() {
     };
 
     window.addEventListener('popstate', handlePopState);
-    window.addEventListener('hashchange', handlePopState);
-    return () => {
-      window.removeEventListener('popstate', handlePopState);
-      window.removeEventListener('hashchange', handlePopState);
-    };
+    return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
   const handleNavigate = (page: PageRoute) => {
@@ -83,83 +72,67 @@ function AppContent() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#FAFAF8] dark:bg-[#0C0D0F] text-[#17191D] dark:text-[#F7F7F8] transition-colors duration-300">
+    <div className="min-h-screen flex flex-col bg-[#FAFAFA] dark:bg-[#050506] text-[#0E0E10] dark:text-[#F5F5F7] transition-colors duration-300">
       {/* Top Bar Navigation */}
       <Navbar currentPage={currentPage} onNavigate={handleNavigate} />
 
-      {/* Main Content Area */}
+      {/* Main Content Area with Smooth Route Transitions */}
       <main className="flex-1">
-        <Suspense
-          fallback={
-            <div
-              className="px-6 py-24 text-center text-sm text-[#5F6573] dark:text-[#9CA3AF]"
-              role="status"
-            >
-              Loading page...
-            </div>
-          }
-        >
-          {currentPage === 'home' && (
-            <>
-              {/* Section 02 — Hero */}
-              <Hero onNavigate={handleNavigate} onExploreWork={handleExploreWork} />
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentPage}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.32, ease: EASE_OUT_EXPO }}
+          >
+            {currentPage === 'home' && (
+              <>
+                <Hero onNavigate={handleNavigate} onExploreWork={handleExploreWork} />
+                <ExpertiseStrip />
+                <WhatWeDo
+                  onNavigate={handleNavigate}
+                  onSelectService={(service) => setSelectedService(service)}
+                />
+                <div id="selected-work-section">
+                  <SelectedWork
+                    onNavigate={handleNavigate}
+                    onSelectProject={(project) => setSelectedProject(project)}
+                  />
+                </div>
+                <HowWeWork onNavigate={handleNavigate} />
+                <AboutSection onNavigate={handleNavigate} />
+                <LeadershipSection />
+                <ClosingCTA onNavigate={handleNavigate} />
+              </>
+            )}
 
-              {/* Section 03 — Expertise Strip */}
-              <ExpertiseStrip />
-
-              {/* Section 04 — What We Do */}
-              <WhatWeDo
+            {currentPage === 'services' && (
+              <ServicesPage
                 onNavigate={handleNavigate}
                 onSelectService={(service) => setSelectedService(service)}
               />
+            )}
 
-              {/* Section 05 — Selected Work */}
-              <div id="selected-work-section">
-                <SelectedWork
-                  onNavigate={handleNavigate}
-                  onSelectProject={(project) => setSelectedProject(project)}
-                />
-              </div>
+            {currentPage === 'work' && (
+              <WorkPage
+                onNavigate={handleNavigate}
+                onSelectProject={(project) => setSelectedProject(project)}
+              />
+            )}
 
-              {/* Section 06 — How We Work */}
-              <HowWeWork onNavigate={handleNavigate} />
+            {currentPage === 'approach' && <ApproachPage onNavigate={handleNavigate} />}
 
-              {/* Section 07 — About ALZA */}
-              <AboutSection onNavigate={handleNavigate} />
+            {currentPage === 'about' && <AboutPage onNavigate={handleNavigate} />}
 
-              {/* Section 08 — Leadership */}
-              <LeadershipSection />
-
-              {/* Section 09 — Closing CTA */}
-              <ClosingCTA onNavigate={handleNavigate} />
-            </>
-          )}
-
-          {currentPage === 'services' && (
-            <ServicesPage
-              onNavigate={handleNavigate}
-              onSelectService={(service) => setSelectedService(service)}
-            />
-          )}
-
-          {currentPage === 'work' && (
-            <WorkPage
-              onNavigate={handleNavigate}
-              onSelectProject={(project) => setSelectedProject(project)}
-            />
-          )}
-
-          {currentPage === 'approach' && <ApproachPage onNavigate={handleNavigate} />}
-
-          {currentPage === 'about' && <AboutPage onNavigate={handleNavigate} />}
-
-          {currentPage === 'contact' && (
-            <ContactPage onOpenPrivacy={() => setPrivacyModalOpen(true)} />
-          )}
-        </Suspense>
+            {currentPage === 'contact' && (
+              <ContactPage onOpenPrivacy={() => setPrivacyModalOpen(true)} />
+            )}
+          </motion.div>
+        </AnimatePresence>
       </main>
 
-      {/* Section 10 — Footer */}
+      {/* Footer */}
       <Footer
         onNavigate={handleNavigate}
         onOpenPrivacy={() => setPrivacyModalOpen(true)}
@@ -188,8 +161,10 @@ function AppContent() {
 
 export default function App() {
   return (
-    <ThemeProvider>
-      <AppContent />
-    </ThemeProvider>
+    <MotionConfig reducedMotion="user">
+      <ThemeProvider>
+        <AppContent />
+      </ThemeProvider>
+    </MotionConfig>
   );
 }
