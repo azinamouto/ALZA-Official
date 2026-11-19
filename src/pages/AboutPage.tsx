@@ -163,12 +163,12 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
                           </h3>
                         </div>
 
-                        <div className="w-11 h-11 rounded-xl bg-[#F3F3F5] dark:bg-[#161619] border border-[var(--border)] flex items-center justify-center font-mono font-semibold text-xs text-[#0E0E10] dark:text-[#F5F5F7] select-none">
-                          {leader.name
-                            .split(' ')
-                            .map((n) => n[0])
-                            .join('')}
-                        </div>
+                        <img
+                          src={leader.imageUrl}
+                          alt={leader.name}
+                          className="w-11 h-11 rounded-xl object-cover border border-[var(--border)] bg-[#F3F3F5] dark:bg-[#161619]"
+                          referrerPolicy="no-referrer"
+                        />
                       </div>
 
                       <div className="p-4 bg-[#F5F5F7]/75 dark:bg-[#111114]/80 rounded-xl border border-[var(--border)] mb-5">

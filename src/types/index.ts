@@ -32,6 +32,7 @@ export interface LeadershipMember {
   role: string;
   focus: string;
   summary: string;
+  imageUrl: string;
 }
 
 export interface ProcessStage {

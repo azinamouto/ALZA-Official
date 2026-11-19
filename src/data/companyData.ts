@@ -306,6 +306,8 @@ export const LEADERSHIP_DATA: LeadershipMember[] = [
     focus: 'Executive Direction, Client Partnerships & Systems Strategy',
     summary:
       'Directs organizational strategy, stakeholder engagement, and business alignment. Jhary works closely with local government units and organizational leaders to translate complex organizational objectives into practical, high-impact digital initiatives.',
+    imageUrl:
+      'https://chat.google.com/api/get_attachment_url?url_type=FIFE_URL&content_type=image%2Fjpeg&attachment_token=AJGomAYJpoHRdJx%2FZXrGA1fPSaruue929aqfZ1wI5O92xyI2hhJ5qNxssrIFwXNCRA7SV6d1r9sBtUiYrnoUfLaZbAGBfopLgzCVwtqAcdpEKhapxSrWQGJYCRxxWERyQGXOxHCtoB8zAEvOUBUtT%2Fcw6VC2wpgV2jRBPzjVYYK30sfeBWu6X0KcfzAvC1KHaAVoQUK1SwzxeMJfllF8aFygKu0ZUpnFQi36Za8LFE0tC1ZHLGSyVpJvnpAsaFc1xF%2FTOYt9oTLDU%2F2RgSvPdCAGGk0Pg%2Ffa1Ch7%2BkR2vJLomEku0XBdg8xjg31U11hkZBKTJvOXwRO7GXZapbABOii7kuIEvSGjnKEI65OnAiAx72ImiBspsIG%2B9SPhENIi9645iaoavcJ%2BbJ8E4CXY8IdZnMafhB3bS3eHc%2BZi%2BhrMAyAzViWnrCwcSzWT2t1t6sjX%2FRUQly6vtz0THaM5Zznr%2F3cI6HS7AMUb5B%2FrIdLUm7cwBkHkP%2FdxKEhLcKwRu8szTvtDPlQ1GR1KXxVoIfMd%2FaNTGFOXkpW0Ui%2B2TiRstRBhWNdYhmj%2BX15SgRERl9l3BmPb%2BC0UTZDYXPVLBiEMViKehgED1jkDmAfLiHGEL2qLolFr5GD5FJp%2FLdJJ%2BkWpAl55JJJsSGPNnWNsOv9o5cT%2BP0EUc1k6XKCTswuzVllt8%2FDiw%3D%3D&allow_caching=true&sz=w512',
   },
   {
     name: 'AJ Rienze',
@@ -313,5 +315,7 @@ export const LEADERSHIP_DATA: LeadershipMember[] = [
     focus: 'Software Architecture, Technology Infrastructure & Engineering Rigor',
     summary:
       'Oversees software architecture, technical standards, and engineering implementation. AJ leads technical design, database modeling, and code quality across ALZA projects, prioritizing long-term maintainability and system reliability.',
+    imageUrl:
+      'https://chat.google.com/api/get_attachment_url?url_type=FIFE_URL&content_type=image%2Fjpeg&attachment_token=AJGomAbhqWpGZdSfcT%2FjKtiDIMH6V8FcpXm5a%2F2o90bYJK7xb6HUwlV7ByE1c2xr8xdjhyhaK%2F%2FQqMfixsaU%2F7BYemilk4o5UJcW2TJDcuUhak4aKb19OYJpbZPhUI5YYb8YdBPFiGadZweoe2Ehe7ygB0mUcb8b0tyzE2gspX3V8DdEPyUddJgbGOki63Z70lMzIseNvbdA1xr1LtSZPmBrVsFql3bsIrsiSKYKDnR5eDF0%2Bxvb5M%2FkObr4%2FxjElL7rGxnXM7lyAd7ePLo8BYkUuKT%2FcY%2BmSuFyvJEzsXPH67z%2BuaYMKEwy3k8gOlyow9UdZIc7e3DqK5Ctytrok%2FAkpquPaC%2B8imZ4Z0mUwanQpMGl7swFlGvswjocEcffKDJMSyRWLkoPzD76Wst%2BSf8WTSq3%2BLZGhlwbHyGoQDt4C3FwIoLLF3Dh35Ff2hrG13GIMtHQ66LdGtCqxjH3QEm3feynFxO8rfVcaI%2FpyPAIj7%2Fy%2F%2F7dEIKHP%2FM9ZxuS7hbl14b9HN72ruWNPz92HCwMeBi6QVwHFOaiMvQrlX%2FYXyEgMNdi2tcMYhX51%2FvpGGH66pPQteiGp5wQhwVsAn4glE3wjd9XAGVL%2B%2BLNQggE2RUAF99XxPh4gJ7V3AQvgluVUbSaF8oJj9SZO0sZDad%2BSrV16%2F4%2B1jA5V7Yp3UXJ6K8%2B64hDFFPPmc9IOitcFEnLQ%3D&allow_caching=true&sz=w512',
   },
 ];
